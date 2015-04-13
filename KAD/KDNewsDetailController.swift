@@ -10,32 +10,40 @@ import UIKit
 
 class KDNewsDetailController: UIViewController {
 
-    required init(coder aDecoder: NSCoder) {
+    required init(coder aDecoder: NSCoder)
+    {
         fatalError("init(coder:) has not been implemented")
     }
     
     var kListApi:KDNewsDetailApi?
+    
     var urlString:String = "http://news-at.zhihu.com/api/3/news/"//test id is 4074215
+    
     var data:NSMutableData=NSMutableData()
+    
     var aId:Int?
+    
     var dicJson:NSDictionary=NSDictionary()
     
     @IBOutlet var labTitle : UILabel!
-    @IBAction func btnReturn(sender : AnyObject) {
+    
+    @IBAction func btnReturn(sender : AnyObject)
+    {
         
     }
+    
     @IBOutlet var webContent : UIWebView!
+    
     @IBOutlet var imgNews : UIImageView!
     
-    
-    
-    override func viewDidLoad() {
+    override func viewDidLoad()
+    {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         self.urlString="\(self.urlString)\(self.aId)"
         println("dddd:\(self.aId)")
         println("urlllstring:\(self.urlString)")
-        kListApi=KDNewsDetailApi(delegate:self,url:self.urlString)
+        kListApi = KDNewsDetailApi(delegate:self,url:self.urlString)
         
     }
 
@@ -73,12 +81,17 @@ class KDNewsDetailController: UIViewController {
     
     func setupView()
     {
-       var sTitle:String=dicJson["title"]? as String
-       labTitle.text=sTitle
-       var sImgNews=dicJson["image"] as String
-       imgNews.setImage(sImgNews,placeHolder: UIImage(named:"001p9BkFgy6KqjPYZg74b&690.jpeg"))
-       var body = dicJson["body"] as String
-       webContent.loadHTMLString(body, baseURL: nil)
+        var sTitle:String=dicJson["title"]? as String
+        
+        labTitle.text=sTitle
+        
+        var sImgNews = dicJson["image"] as String
+        
+        imgNews.setImage(sImgNews,placeHolder: UIImage(named:"001p9BkFgy6KqjPYZg74b&690.jpeg"))
+        
+        var body = dicJson["body"] as String
+        
+        webContent.loadHTMLString(body, baseURL: nil)
     }
 }
 

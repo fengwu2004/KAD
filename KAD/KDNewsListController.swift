@@ -65,20 +65,20 @@ class KDNewsListController: UIViewController, UITableViewDelegate, UITableViewDa
         // Dispose of any resources that can be recreated.
     }
 
-//    func connection(didReceiveResponse: NSURLConnection!,didReceiveResponse response: NSURLResponse!) {
-//            
-//            // Recieved a new request, clear out the data object
-//        self.data = NSMutableData()
-//    }
-//    
-//    func connection(connection: NSURLConnection!,didReceiveData data: NSData!) {
-//
-//            // Append the recieved chunk of data to our data object
-//        self.data.appendData(data)
-//    }
+    func connection(didReceiveResponse: NSURLConnection!,didReceiveResponse response: NSURLResponse!) {
+            
+            // Recieved a new request, clear out the data object
+        self.data = NSMutableData()
+    }
     
-    func connectionDidFinishLoading(connection: NSURLConnection!) {
-        
+    func connection(connection: NSURLConnection!,didReceiveData data: NSData!) {
+
+            // Append the recieved chunk of data to our data object
+        self.data.appendData(data)
+    }
+    
+    func connectionDidFinishLoading(connection: NSURLConnection!)
+    {
         var err: NSError
         
         jsonDic = NSJSONSerialization.JSONObjectWithData(self.data,
@@ -87,9 +87,9 @@ class KDNewsListController: UIViewController, UITableViewDelegate, UITableViewDa
             
             error: nil) as NSDictionary
         
-        jsonArrStories=jsonDic.objectForKey("stories") as NSMutableArray
+        jsonArrStories = jsonDic.objectForKey("stories") as NSMutableArray
         
-        jsonArrtop_stories=jsonDic.objectForKey("top_stories") as NSMutableArray
+        jsonArrtop_stories = jsonDic.objectForKey("top_stories") as NSMutableArray
         
       //print("NewsList Json Data:\(jsonDic)")
         
@@ -98,8 +98,11 @@ class KDNewsListController: UIViewController, UITableViewDelegate, UITableViewDa
         print("jsonArrtop_stories:\(jsonArrtop_stories)")
     
         tabActivity.stopAnimating()
+        
         tabActivity.removeFromSuperview()
+        
         scrollActivity.stopAnimating()
+        
         scrollActivity.removeFromSuperview()
         
         self.setupViews()
@@ -109,26 +112,37 @@ class KDNewsListController: UIViewController, UITableViewDelegate, UITableViewDa
     func setupViews()
     {
         //tableView
-       tabNewList.delegate=self
-       tabNewList.dataSource=self
-       var nib = UINib(nibName:"NewsCell", bundle: nil)
-       self.tabNewList?.registerNib(nib, forCellReuseIdentifier: identifier)
+        tabNewList.delegate = self
+        
+        tabNewList.dataSource = self
+        
+        var nib = UINib(nibName:"NewsCell", bundle: nil)
+        
+        self.tabNewList?.registerNib(nib, forCellReuseIdentifier: identifier)
         
         //scrollView
-       scrollNewList.delegate=self
-       var pageCount=jsonArrtop_stories.count
-       println("pageCount\(pageCount)")
-       scrollNewList.contentSize=CGSizeMake(CGFloat(pageCount*320), CGFloat(140))
-       scrollNewList.pagingEnabled=true
-       self.addImgsToScroll(scrollNewList, arrStory_Top: self.jsonArrtop_stories)
+        scrollNewList.delegate = self
+        
+        var pageCount = jsonArrtop_stories.count
+        
+        println("pageCount\(pageCount)")
+        
+        scrollNewList.contentSize = CGSizeMake(CGFloat(pageCount*320), CGFloat(140))
+        
+        scrollNewList.pagingEnabled = true
+        
+        self.addImgsToScroll(scrollNewList, arrStory_Top: self.jsonArrtop_stories)
         
         //pageConrol
-       pageNewList.numberOfPages=pageCount
-       pageNewList.currentPage=1
+        pageNewList.numberOfPages = pageCount
         
-       var dic1=jsonArrtop_stories.objectAtIndex(0) as NSDictionary
-       var title1=dic1["title"] as String
-       labScrollTitle.text=title1
+        pageNewList.currentPage = 1
+        
+        var dic1 = jsonArrtop_stories.objectAtIndex(0) as NSDictionary
+        
+        var title1 = dic1["title"] as String
+        
+        labScrollTitle.text = title1
         
         //RefreshControl
         self.addRefreshView("PullUpView")
@@ -162,13 +176,13 @@ class KDNewsListController: UIViewController, UITableViewDelegate, UITableViewDa
         
         var data = self.jsonArrStories[index] as NSDictionary
         
-        var sTitle=data.objectForKey("title") as String
+        var sTitle = data.objectForKey("title") as String
         
-        cell.NLabContent.text=sTitle
+        cell.NLabContent.text = sTitle
         
-        var arrImgURL=data.objectForKey("images") as NSArray
+        var arrImgURL = data.objectForKey("images") as NSArray
         
-        var imagURL=arrImgURL[0] as String
+        var imagURL = arrImgURL[0] as String
         
         println("imageURL:\(imagURL)")
         
@@ -193,8 +207,9 @@ class KDNewsListController: UIViewController, UITableViewDelegate, UITableViewDa
         
         println("detailConrol.id\(aId)")
         
-       // self.showViewController(detailConrol, sender: self)
-//       self.presentModalViewController(detailConrol, animated: true)
+        self.showViewController(detailConrol, sender: self)
+        
+//        self.presentModalViewController(detailConrol, animated: true)
     }
     
     func scrollViewDidScroll(scrollView: UIScrollView!) // any offset changes
@@ -248,22 +263,29 @@ class KDNewsListController: UIViewController, UITableViewDelegate, UITableViewDa
     
     func addImgsToScroll(scroll:UIScrollView,arrStory_Top:NSArray)
     {
-        var cursor=0
-        for item : AnyObject in arrStory_Top {
+        var cursor = 0
+        for item : AnyObject in arrStory_Top
+        {
             println(item)
-            var curImg=UIImageView(frame:CGRectMake(CGFloat(320*cursor),CGFloat(0),CGFloat(320),CGFloat(140)))
-            var ImgURL:String!=item.objectForKey("image") as String
+            
+            var curImg = UIImageView(frame:CGRectMake(CGFloat(320*cursor),CGFloat(0),CGFloat(320),CGFloat(140)))
+            
+            var ImgURL:String! = item.objectForKey("image") as String
+            
             curImg.setImage(ImgURL,placeHolder: UIImage(named:"001p9BkFgy6KqjPYZg74b&690.jpeg"))
+            
             scroll.addSubview(curImg)
+            
             cursor++
         }
     }
     
     func addRefreshView(var sXibName:NSString!)
     {
-        var nibView:NSArray=NSBundle.mainBundle().loadNibNamed(sXibName,owner: nil,options: nil) as NSArray
-        var rView=nibView[0] as PullUpView
-        tabNewList.tableFooterView=rView
+        var nibView:NSArray = NSBundle.mainBundle().loadNibNamed(sXibName, owner: nil, options: nil) as NSArray
+        
+        var rView = nibView[0] as PullUpView
+        
+        tabNewList.tableFooterView = rView
     }
 }
-
